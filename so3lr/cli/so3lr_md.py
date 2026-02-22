@@ -1616,6 +1616,8 @@ def perform_md(
 
     initial_geometry_dict = atoms_to_jnp(initial_geometry, precision=precision)
 
+    logger.info(f'Shape of the position array: {initial_geometry_dict["positions"].shape}')
+
     (position, box, displacement, shift, fractional_coordinates) = handle_box(
         shift_displacement, initial_geometry_dict['positions'], cell)
 
@@ -1624,7 +1626,7 @@ def perform_md(
     hdf5_store = None
     if output_format == 'hdf5':
         if output_atom_indices is None:
-            num_atoms = position.shape[0]
+            num_atoms = position.shape[-2] if len(position.shape) == 2 else position.shape[0] * position.shape[1]
         else:
             num_atoms = len(output_atom_indices)
 
@@ -1723,6 +1725,9 @@ def perform_md(
 
     nbrs = neighbor_fn.allocate(position, box=box)
     nbrs_lr = neighbor_fn_lr.allocate(position, box=box) if lr else None
+
+    logger.info(f'Number of molecules inferred from the neighbor list: {nbrs.idx.shape[0] / 10}')
+    logger.info(f'Number of molecules inferred from the neighbor list: {nbrs_lr.idx.shape[0] / 10 if nbrs_lr is not None else nbrs_lr}')
 
     # Apply units
     unit_dict = handle_units(
