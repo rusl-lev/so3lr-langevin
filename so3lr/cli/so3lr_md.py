@@ -38,6 +38,7 @@ from so3lr.graph import Graph
 from so3lr import So3lrPotential
 
 from jaxpme.kspace import get_kgrid_mesh, get_kgrid_ewald, get_kgrid_mesh_shape, get_kgrid_ewald_shape
+import numpy as np
 
 # Setup logging
 logger = logging.getLogger("SO3LR")
@@ -1726,8 +1727,8 @@ def perform_md(
     nbrs = neighbor_fn.allocate(position, box=box)
     nbrs_lr = neighbor_fn_lr.allocate(position, box=box) if lr else None
 
-    logger.info(f'Number of molecules inferred from the neighbor list: {nbrs.idx.shape[0] / 10}')
-    logger.info(f'Number of molecules inferred from the neighbor list: {nbrs_lr.idx.shape[0] / 10 if nbrs_lr is not None else nbrs_lr}')
+    logger.info(f'Number of molecules inferred from the neighbor list: {np.array(nbrs.idx).shape[0] / 10}')
+    logger.info(f'Number of molecules inferred from the neighbor list: {np.array(nbrs_lr.idx).shape[0] / 10 if nbrs_lr is not None else nbrs_lr}')
 
     # Apply units
     unit_dict = handle_units(
