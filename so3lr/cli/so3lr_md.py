@@ -1627,7 +1627,7 @@ def perform_md(
     hdf5_store = None
     if output_format == 'hdf5':
         if output_atom_indices is None:
-            num_atoms = position.shape[-2] if len(position.shape) == 2 else position.shape[0] * position.shape[1]
+            num_atoms = position.shape[0]
         else:
             num_atoms = len(output_atom_indices)
 
